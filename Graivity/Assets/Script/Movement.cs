@@ -104,6 +104,7 @@ public class Movement : MonoBehaviour
             else
             {
                 rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+                timer = Mathf.Infinity;
             }
             
         }
