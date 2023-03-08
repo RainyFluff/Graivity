@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Graivity/Assets/CameraBeta.cs.meta
 guid: 7a92436cc3be6df43bdf08561ab90571
+=======
+guid: 4ec757fdc31a1224ca3d77a74f587570
+>>>>>>> Stashed changes:Graivity/Assets/Scripts/LerpTest.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
