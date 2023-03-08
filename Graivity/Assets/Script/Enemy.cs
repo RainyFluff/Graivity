@@ -10,9 +10,12 @@ public class Enemy : MonoBehaviour
     public float speed = 5;
     GameObject player;
     public GameObject findPlayer;
+    public GameObject bulletSpawn;
+    public GameObject weapon;
     bool foundPlayer = false;
     float timer = Mathf.Infinity;
     RaycastHit objectHit;
+    public GameObject bullet;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,11 +31,14 @@ public class Enemy : MonoBehaviour
         {
             direction *= -1;
         }
+        Vector3 difference = player.transform.position - findPlayer.transform.position;
+        float rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+        findPlayer.transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ);
 
-        findPlayer.transform.LookAt(player.transform.position);
+        //findPlayer.transform.LookAt(player.transform.position);
 
         
-        if(Physics.Raycast(findPlayer.transform.position, findPlayer.transform.forward, out objectHit, 10) && objectHit.transform.gameObject == player)
+        if(Physics.Raycast(findPlayer.transform.position, findPlayer.transform.right, out objectHit, 10) && objectHit.transform.gameObject.tag == "Player")
         {
             //lastDirection = direction;
             //direction = 0;
@@ -57,11 +63,32 @@ public class Enemy : MonoBehaviour
 
             if(Time.time - timer > 2)
             {
-                Debug.Log("shoot");
+                shoot();
                 timer = Mathf.Infinity;
+            }
+            weapon.transform.position = bulletSpawn.transform.position;
+            weapon.transform.rotation = bulletSpawn.transform.rotation;
+        }
+
+        else
+        {
+            if(direction > 0)
+            {
+                weapon.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 0.5f, transform.position.z);
+                weapon.transform.rotation = transform.rotation;
+            }
+            else
+            {
+                weapon.transform.position = new Vector3(transform.position.x - 1, transform.position.y + 0.5f, transform.position.z);
+                weapon.transform.rotation = transform.rotation;
             }
         }
         
 
+    }
+
+    void shoot()
+    {
+        Instantiate(bullet, bulletSpawn.transform.position, findPlayer.transform.rotation);
     }
 }
