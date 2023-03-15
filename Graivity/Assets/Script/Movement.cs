@@ -63,34 +63,7 @@ public class Movement : MonoBehaviour
         //friction
         if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && isGrounded)
         {
-<<<<<<< Updated upstream
-            
-            
-            
-            
-            
-            if(timer == Mathf.Infinity)
-            {
-                timer = Time.time;
-            }
-
-            if(rb.velocity.x > 0.3f)
-            {
-                rb.velocity = new Vector3(rbForce - ((Time.time - timer) * 30), rb.velocity.y, rb.velocity.z);
-            }
-            else if(rb.velocity.x < -0.3f)
-            {
-                rb.velocity = new Vector3(-rbForce + ((Time.time - timer) * 30), rb.velocity.y, rb.velocity.z);
-            }
-            else
-            {
-                rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
-                timer = Mathf.Infinity;
-            }
-            
-=======
-            lerpMovement();
->>>>>>> Stashed changes
+            lerpMovement();     
         }
         else
         {

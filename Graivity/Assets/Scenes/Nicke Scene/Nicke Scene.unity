@@ -551,7 +551,7 @@ MonoBehaviour:
   rbJumpForce: 10
   feet: {fileID: 41894750}
   stopTime: 10
-  lerpDuration: 5
+  lerpDuration: 3
 --- !u!136 &1956367063
 CapsuleCollider:
   m_ObjectHideFlags: 0
