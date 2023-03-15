@@ -22,6 +22,7 @@ public class Movement2 : MonoBehaviour
     float dashCooldown = -5;
     float timeRunning = Mathf.Infinity;
     float runningBonus = 10;
+    int jumpsleft = 1;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -34,8 +35,7 @@ public class Movement2 : MonoBehaviour
     void Update()
     {
         move();
-        isGrounded = Physics.CheckSphere(feet.transform.position, 0.2f, groundMask);
-        Debug.Log(rbForce);
+        isGrounded = Physics.CheckSphere(feet.transform.position, 0.1f, groundMask);
     }
 
     void move()
@@ -44,11 +44,13 @@ public class Movement2 : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             rb.velocity = new Vector3(-rbForce, rb.velocity.y, rb.velocity.z);
-            if(timeRunning == Mathf.Infinity)
+            if(timeRunning == Mathf.Infinity || Input.GetKey(KeyCode.D))
             {
                 timeRunning = Time.time;
             }
         }
+       
+
         //right
         else if (Input.GetKey(KeyCode.D))
         {
@@ -58,7 +60,6 @@ public class Movement2 : MonoBehaviour
                 timeRunning = Time.time;
             }
         }
-
         else
         {
             timeRunning = Mathf.Infinity;
@@ -73,13 +74,17 @@ public class Movement2 : MonoBehaviour
             }
         }
 
-        
+        if (isGrounded)
+        {
+            jumpsleft = 1;
+        }
         //jump
         Vector3 rbDrag = new Vector3(0, rb.drag, 0);
         Vector3 jumpCalc = transform.up * rbJumpForce + rbDrag;
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && isGrounded)
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && (isGrounded || jumpsleft >= 1))
         {
             rb.AddForce(jumpCalc, ForceMode.Impulse);
+            jumpsleft--;
         }
         //slamdown
         if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.LeftControl)) && !isGrounded)
