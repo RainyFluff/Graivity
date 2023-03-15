@@ -6,69 +6,136 @@ public class Movement2 : MonoBehaviour
 {
     Rigidbody rb;
     public float rbForce = 10;
+    float originalForce;
     public float rbJumpForce = 20;
     bool isGrounded;
     public GameObject feet;
     LayerMask groundMask;
+    public float stopTime = 0.2f;
+
+    float timeElapsed;
+    public float lerpDuration = 0.2f;
+    float endValue = 0;
+    float valueToLerp;
+
     float timer = Mathf.Infinity;
-    float direction = 1;
+    float dashCooldown = -5;
+    float timeRunning = Mathf.Infinity;
+    float runningBonus = 10;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         isGrounded = false;
         groundMask = LayerMask.GetMask("Ground");
+        originalForce = rbForce;
     }
 
     // Update is called once per frame
     void Update()
     {
         move();
-        if (Input.GetKey(KeyCode.A))
-        {
-            if (timer == Mathf.Infinity)
-            {
-                timer = Time.time;
-            }
-            direction = -1;
-            Moving();
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            if (timer == Mathf.Infinity)
-            {
-                timer = Time.time;
-            }
-            direction = 1;
-            Moving();
-        }
-        else
-        {
-            rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
-        }
-        //jump
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && isGrounded)
-        {
-
-            rb.AddForce(transform.up * rbJumpForce, ForceMode.Impulse);
-        }
         isGrounded = Physics.CheckSphere(feet.transform.position, 0.2f, groundMask);
-        Debug.Log(isGrounded);
+        Debug.Log(rbForce);
     }
 
     void move()
     {
-        
-    }
-    void Moving()
-    {
-        if(rb.velocity.x < 5 && rb.velocity.x > -5)
+        //left
+        if (Input.GetKey(KeyCode.A))
         {
-            rb.velocity = new Vector3(1 + ((5 * Time.time - timer)) * direction, rb.velocity.y, rb.velocity.z);
+            rb.velocity = new Vector3(-rbForce, rb.velocity.y, rb.velocity.z);
+            if(timeRunning == Mathf.Infinity)
+            {
+                timeRunning = Time.time;
+            }
+        }
+        //right
+        else if (Input.GetKey(KeyCode.D))
+        {
+            rb.velocity = new Vector3(rbForce, rb.velocity.y, rb.velocity.z);
+            if (timeRunning == Mathf.Infinity)
+            {
+                timeRunning = Time.time;
+            }
+        }
+
+        else
+        {
+            timeRunning = Mathf.Infinity;
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time - dashCooldown > 5)
+        {
+            if(timer == Mathf.Infinity)
+            {
+                timer = Time.time;
+                dashCooldown = Time.time;
+            }
+        }
+
+        
+        //jump
+        Vector3 rbDrag = new Vector3(0, rb.drag, 0);
+        Vector3 jumpCalc = transform.up * rbJumpForce + rbDrag;
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && isGrounded)
+        {
+            rb.AddForce(jumpCalc, ForceMode.Impulse);
+        }
+        //slamdown
+        if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.LeftControl)) && !isGrounded)
+        {
+            rb.AddForce(-transform.up * rbJumpForce, ForceMode.Impulse);
+        }
+        //friction
+        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && isGrounded)
+        {
+            lerpMovement();
         }
         else
         {
-            rb.velocity = new Vector3(5 * direction, rb.velocity.y, rb.velocity.z);
+            timeElapsed = 0;
         }
-       
+
+
+        if(timeRunning == Mathf.Infinity)
+        {
+            rbForce = originalForce;
+        }
+
+        else if(Time.time - timeRunning > 1)
+        {
+            if(Time.time - timeRunning < 4)
+            {
+                rbForce = originalForce + ((Time.time - (timeRunning + 1)) * 3.3f);
+            }
+            else
+            {
+                rbForce = originalForce + runningBonus;
+            }
+        }
+
+        else if(Time.time - timer > 0.1f && Time.time - timer < 1)
+        {
+            rbForce = (originalForce * 3 - ((Time.time - timer) * 20));
+        }
+
+        else if(Time.time - timer < 0 || Time.time - timer >0.6f)
+        {
+            timer = Mathf.Infinity;
+            rbForce = originalForce;  
+        }
+
+        
+
+        
+    }
+    void lerpMovement()
+    {
+        if (timeElapsed < lerpDuration)
+        {
+            valueToLerp = Mathf.Lerp(rb.velocity.x, endValue, timeElapsed / lerpDuration);
+            timeElapsed += Time.deltaTime;
+            rb.velocity = new Vector3(valueToLerp, rb.velocity.y, rb.velocity.z);
+        }
     }
 }
