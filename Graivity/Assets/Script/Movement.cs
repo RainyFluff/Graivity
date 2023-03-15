@@ -11,10 +11,12 @@ public class Movement : MonoBehaviour
     public GameObject feet;
     LayerMask groundMask;
     public float stopTime = 0.2f;
-    float elapsedTime;
-    float timer = Mathf.Infinity;
+
+    float timeElapsed;
+    public float lerpDuration = 0.2f;
+    float endValue = 0;
+    float valueToLerp;
     
-   
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -58,31 +60,10 @@ public class Movement : MonoBehaviour
         {
             rb.AddForce(-transform.up * rbJumpForce, ForceMode.Impulse);
         }
-        //gravity
-        /*if (!isGrounded)
-        {
-            rb.AddForce(0, -9.82f, 0, ForceMode.Acceleration);
-        }
-        */
         //friction
-        /*if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && isGrounded)
-        {
-            
-            
-                float rbVelocityX = rb.velocity.x;
-                float rbVelocityXFriction = Mathf.Lerp(rbVelocityX, 0, elapsedTime / stopTime);
-                stopTime += Time.deltaTime;
-
-               
-                
-                //rb.velocity = new Vector3(rbVelocityXFriction, rb.velocity.y, rb.velocity.z);
-              
-        }
-        */
-        //NICKES
-
         if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && isGrounded)
         {
+<<<<<<< Updated upstream
             
             
             
@@ -107,16 +88,22 @@ public class Movement : MonoBehaviour
                 timer = Mathf.Infinity;
             }
             
+=======
+            lerpMovement();
+>>>>>>> Stashed changes
         }
         else
         {
-            timer = Mathf.Infinity;
+            timeElapsed = 0;
         }
-
-        
-        
-       
-        
-
+    }
+    void lerpMovement()
+    {
+        if (timeElapsed < lerpDuration)
+        {
+            valueToLerp = Mathf.Lerp(rb.velocity.x, endValue, timeElapsed / lerpDuration);
+            timeElapsed += Time.deltaTime;
+            rb.velocity = new Vector3(valueToLerp, rb.velocity.y, rb.velocity.z);
+        }
     }
 }

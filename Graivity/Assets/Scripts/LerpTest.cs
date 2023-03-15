@@ -5,31 +5,32 @@ using UnityEngine;
 public class LerpTest : MonoBehaviour
 {
     float timeElapsed;
-    float lerpDuration = 3;
-    float startValue = 0;
-    float endValue = 10;
+    float lerpDuration = 0.2f;
+    float endValue = 0;
     float valueToLerp;
-
-    float startTime;
+    public Rigidbody rb;
     void Update()
     {
-       if (Input.GetKey(KeyCode.K))
-       {
-            lerp();
-       }
-       
-
-    }
-
-    void lerp()
-    {
-        lerpDuration = startTime + 1;
-        startTime = Time.time;
-        if (startTime < lerpDuration)
+        if (Input.GetKey(KeyCode.K))
         {
-            valueToLerp = Mathf.Lerp(startValue, endValue, Time.time / lerpDuration);
-            
+            lerpMovement();
         }
-        Debug.Log(valueToLerp);
+        else 
+        {
+            timeElapsed = 0;
+        }
+    }
+    void lerpMovement()
+    {
+        if (timeElapsed < lerpDuration)
+        {
+            valueToLerp = Mathf.Lerp(rb.velocity.x, endValue, timeElapsed / lerpDuration);
+            timeElapsed += Time.deltaTime;
+            Debug.Log(valueToLerp);
+        }
+
+        
+        
+
     }
 }
