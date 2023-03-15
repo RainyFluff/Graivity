@@ -8,19 +8,24 @@ public class Movement : MonoBehaviour
     public float rbForce = 10;
     public float rbJumpForce = 20;
     bool isGrounded;
+    bool isWallRight;
+    bool isWallLeft;
     public GameObject feet;
     LayerMask groundMask;
     public float stopTime = 0.2f;
+    public float wallRunDistance = 0.5f;
 
     float timeElapsed;
-    public float lerpDuration = 0.2f;
+    public float lerpDuration = 0.8f;
     float endValue = 0;
     float valueToLerp;
+
     
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         isGrounded = false;
+        isWallRight = false;
         groundMask = LayerMask.GetMask("Ground");
         
     }
@@ -30,7 +35,9 @@ public class Movement : MonoBehaviour
     {
         move();
         isGrounded = Physics.CheckSphere(feet.transform.position, 0.2f, groundMask);
-        
+        isWallRight = Physics.Raycast(transform.position, transform.right, wallRunDistance);
+        isWallLeft = Physics.Raycast(transform.position, -transform.right, wallRunDistance);
+        wallRunning();
     }
 
     void move()
@@ -68,6 +75,38 @@ public class Movement : MonoBehaviour
         else
         {
             timeElapsed = 0;
+        }
+    }
+
+    void wallRunning()
+    {
+        if ((isWallRight || isWallLeft) && !isGrounded)
+        {
+            Debug.Log("WallFound");
+            rb.useGravity = false;
+            rb.velocity = new Vector3(rb.velocity.x, 0);
+        }
+        else if (!isWallRight || !isWallLeft)
+        {
+            Debug.Log("WallNotFound");
+            rb.useGravity = true;
+            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y);
+        }
+        //wall jump left
+        if (isWallRight && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
+        {
+            jumpLeft();
+            
+        }
+        //wall jump right
+        if (isWallLeft && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
+        {
+            rb.AddForce((transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
+        }
+
+        void jumpLeft()
+        {
+            rb.AddForce((-transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
         }
     }
     void lerpMovement()
