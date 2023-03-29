@@ -467,11 +467,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e02c5b0054e4c4e9132805e312183f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rbForce: 7
   rbJumpForce: 8
+  rbForce: 7
   feet: {fileID: 1227848535}
-  stopTime: 0.2
   lerpDuration: 0.2
+  wallRunDistance: 0.5
 --- !u!1 &1227848535
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,7 +609,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1729143809, guid: 16fc17701bd618a41853937f2cb7cae8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7186684199060567226, guid: 16fc17701bd618a41853937f2cb7cae8, type: 3}
       propertyPath: m_LocalPosition.x
