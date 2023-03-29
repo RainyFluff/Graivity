@@ -132,7 +132,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3428473192182479003}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -286,7 +286,7 @@ MonoBehaviour:
   findPlayer: {fileID: 3428473193574378296}
   bulletSpawn: {fileID: 3428473193910054691}
   weapon: {fileID: 3428473192182479003}
-  bullet: {fileID: 344968539960398019, guid: 6ebff6d8fc6541c48ab6b5df4b777baa, type: 3}
+  bullet: {fileID: 3642045441902320059, guid: 189cbdcc7f20ca14a944149414b78c98, type: 3}
 --- !u!54 &3428473193326970403
 Rigidbody:
   m_ObjectHideFlags: 0
