@@ -55,7 +55,7 @@ public class Enemy : MonoBehaviour
                 foundPlayer = false;
                 //direction = lastDirection;
                 timer = Mathf.Infinity;
-                transform.Translate(transform.right * 5 * direction * Time.deltaTime);
+                transform.Translate(transform.right * speed * direction * Time.deltaTime);
             }
             //lastDirection = direction;
             //direction = 0;
@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour
             foundPlayer = false;
             //direction = lastDirection;
             timer = Mathf.Infinity;
-            transform.Translate(transform.right * 5 * direction * Time.deltaTime);
+            transform.Translate(transform.right * speed * direction * Time.deltaTime);
         }
 
 
