@@ -24,7 +24,9 @@ public class Movement : MonoBehaviour
     float timeElapsed;
     float endValue = 0;
     float valueToLerp;
-   
+
+    [Header("Animation")]
+    public Animator animator;
    
 
     [Header("WallRunning")]
@@ -62,11 +64,13 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             rb.velocity = new Vector3(-rbForce, rb.velocity.y, rb.velocity.z);
+            animator.SetBool("MoveRight", false);
         }
         //right
         if (Input.GetKey(KeyCode.D))
         {
             rb.velocity = new Vector3(rbForce, rb.velocity.y, rb.velocity.z);
+            animator.SetBool("MoveRight", true);
         }
         //dash right
         if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D) && dashTimer <= Time.time)
@@ -111,14 +115,14 @@ public class Movement : MonoBehaviour
         //wallcheck
         if ((isWallRight || isWallLeft) && !isGrounded)
         {
-            Debug.Log("WallFound");
+            
             rb.useGravity = false;
             rb.velocity = new Vector3(rb.velocity.x, -1);
         }
         //wallcheckloss
         else if (!isWallRight || !isWallLeft)
         {
-            Debug.Log("WallNotFound");
+            
             rb.useGravity = true;
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y);
         }

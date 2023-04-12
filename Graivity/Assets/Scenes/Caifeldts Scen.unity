@@ -587,7 +587,10 @@ MonoBehaviour:
   rbJumpForce: 7.92
   feet: {fileID: 920455980}
   stopTime: 0.2
+  dashForce: 10
+  dashCooldown: 5
   lerpDuration: 0.8
+  wallRunDistance: 0.5
 --- !u!54 &1092700191
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -716,11 +719,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1763217647 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3428473192182479003, guid: 5110ea990ff0b694fab60f2286e4dd39, type: 3}
-  m_PrefabInstance: {fileID: 1902672953}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1902672953
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -795,7 +793,7 @@ PrefabInstance:
     - target: {fileID: 3428473193326970590, guid: 5110ea990ff0b694fab60f2286e4dd39, type: 3}
       propertyPath: weapon
       value: 
-      objectReference: {fileID: 1763217647}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5110ea990ff0b694fab60f2286e4dd39, type: 3}
 --- !u!1 &2117153764
