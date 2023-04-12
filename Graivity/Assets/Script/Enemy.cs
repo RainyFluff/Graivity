@@ -29,9 +29,10 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(foundPlayer);
         findPlayer.transform.position = new Vector3(this.gameObject.transform.position.x, this.transform.position.y + 0.5f);
         Debug.Log(direction);
-        if(!Physics.Raycast(new Vector3(transform.position.x + direction/2, transform.position.y, transform.position.z), -transform.up, 1))
+        if(!Physics.Raycast(new Vector3(transform.position.x + direction/2, transform.position.y, transform.position.z), -transform.up, 2))
         {
             direction *= -1;
         }
@@ -43,11 +44,21 @@ public class Enemy : MonoBehaviour
         //findPlayer.transform.LookAt(player.transform.position);
 
         
-        if(Physics.Raycast(findPlayer.transform.position, findPlayer.transform.right, out objectHit, 10) && objectHit.transform.gameObject.tag == "Player")
+        if(Physics.Raycast(findPlayer.transform.position, findPlayer.transform.right, out objectHit, 10))
         {
+            if(objectHit.transform.gameObject.tag == "Player" || objectHit.transform.gameObject.tag == "bullet")
+            {
+                foundPlayer = true;
+            }
+            else
+            {
+                foundPlayer = false;
+                //direction = lastDirection;
+                timer = Mathf.Infinity;
+                transform.Translate(transform.right * 5 * direction * Time.deltaTime);
+            }
             //lastDirection = direction;
             //direction = 0;
-            foundPlayer = true;
         }
 
         else

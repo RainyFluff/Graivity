@@ -9,6 +9,7 @@ public class Bullet : MonoBehaviour
     Rigidbody rb;
     GameObject enemy;
     GameObject player;
+    GameObject target;
 
     PlayerOneHealth POH;
    
@@ -32,7 +33,13 @@ public class Bullet : MonoBehaviour
         }
         else
         {
+            target = collision.gameObject;
+            if (target.GetComponent<hp>())
+            {
+                target.GetComponent<hp>().health -= 20;
+            }
             Destroy(this.gameObject);
+            target = null;
         }
 
     }
