@@ -21,7 +21,7 @@ public class noGravity : MonoBehaviour
     {
         if (other.CompareTag("NoGravity"))
         {
-            GetComponent<Movement2>().enabled = false;
+            GetComponent<Movement>().enabled = false;
             epicFloat();
             inAir = true;
         }
@@ -30,7 +30,7 @@ public class noGravity : MonoBehaviour
     { 
         if(other.CompareTag("NoGravity"))
         {
-            GetComponent<Movement2>().enabled = true;
+            GetComponent<Movement>().enabled = true;
             inAir = false;
         }
     }
