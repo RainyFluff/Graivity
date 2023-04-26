@@ -5,32 +5,39 @@ using UnityEngine;
 public class Movement2 : MonoBehaviour
 {
     [Header("General")]
-    public float rbJumpForce = 20;
-    Rigidbody rb;
     public float rbForce = 10;
-    float originalForce;
-    bool isGrounded;
+    Rigidbody rb;
+    public float rbJumpForce = 20;
     public GameObject feet;
     LayerMask groundMask;
+    public float stopTime = 0.2f;
+    bool isGrounded;
+    float jumpsLeft;
+    public float dashForce = 10f;
+
+    [Header("CoolDowns")]
+    public float dashCooldown = 5;
+    float dashTimer;
 
     [Header("Lerp")]
-    public float lerpDuration = 0.2f;
+    public float lerpDuration = 0.8f;
     float timeElapsed;
     float endValue = 0;
     float valueToLerp;
 
-    [Header("Jakobs Schizofreni")]
-    //float timer = Mathf.Infinity;
-    float dashCooldown = -5;
-    //float timeRunning = Mathf.Infinity;
-    //float runningBonus = 10;
-    int jumpsleft = 1;
+    [Header("Animation")]
+    //public Animator animator;
 
-    [Header("Wall Running")]
+    [Header("Slamdown")]
+    float slamTimer = Mathf.Infinity;
+    public float timeForSlam;
+
+
+    [Header("WallRunning")]
     public float wallRunDistance = 0.5f;
     bool isWallRight;
     bool isWallLeft;
- 
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -38,17 +45,21 @@ public class Movement2 : MonoBehaviour
         isWallRight = false;
         isWallLeft = false;
         groundMask = LayerMask.GetMask("Ground");
-        originalForce = rbForce;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        wallRunning();
         move();
-        isGrounded = Physics.CheckSphere(feet.transform.position, 0.1f, groundMask);
+        isGrounded = Physics.CheckSphere(feet.transform.position, 0.2f, groundMask);
         isWallRight = Physics.Raycast(transform.position, transform.right, wallRunDistance);
         isWallLeft = Physics.Raycast(transform.position, -transform.right, wallRunDistance);
+        wallRunning();
+        if (isGrounded)
+        {
+            jumpsLeft = 1;
+        }
     }
 
     void move()
@@ -57,106 +68,81 @@ public class Movement2 : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             rb.velocity = new Vector3(-rbForce, rb.velocity.y, rb.velocity.z);
-            /*if(timeRunning == Mathf.Infinity || Input.GetKey(KeyCode.D))
-            {
-                timeRunning = Time.time;
-            }
-            */
+            //animator.SetBool("MoveRight", false);
         }
         //right
-        else if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D))
         {
             rb.velocity = new Vector3(rbForce, rb.velocity.y, rb.velocity.z);
-            /*if (timeRunning == Mathf.Infinity)
-            {
-                timeRunning = Time.time;
-            }
-            */
+            //animator.SetBool("MoveRight", true);
         }
-        /*else
+        //dash right
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D) && dashTimer <= Time.time)
         {
-            timeRunning = Mathf.Infinity;
+            rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+            rb.AddForce(transform.right * dashForce, ForceMode.Impulse);
+            dashTimer = Time.time + dashCooldown;
         }
-        */
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time - dashCooldown > 5)
+        //dash left
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.A) && dashTimer <= Time.time)
         {
-            /*if(timer == Mathf.Infinity)
-            {
-                timer = Time.time;
-                dashCooldown = Time.time;
-            }
-            */
-        }
-
-        if (isGrounded)
-        {
-            jumpsleft = 1;
+            rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+            rb.AddForce(-transform.right * dashForce, ForceMode.Impulse);
+            dashTimer = Time.time + dashCooldown;
         }
         //jump
         Vector3 rbDrag = new Vector3(0, rb.drag, 0);
         Vector3 jumpCalc = transform.up * rbJumpForce + rbDrag;
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && (isGrounded || jumpsleft >= 1))
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && (isGrounded || jumpsLeft >= 1) && !(isWallLeft || isWallRight))
         {
             rb.AddForce(jumpCalc, ForceMode.Impulse);
-            jumpsleft--;
+            jumpsLeft--;
         }
         //slamdown
-        if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.LeftControl)) && !isGrounded)
+        if ((Input.GetKey(KeyCode.S) && !isGrounded))
         {
-            rb.AddForce(-transform.up * rbJumpForce, ForceMode.Impulse);
+            slamTimer = Time.time;
         }
         //friction
         if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && isGrounded)
         {
-            lerpMovement();
+            lerpDeacceleration();
         }
         else
         {
             timeElapsed = 0;
         }
 
-/*
-        if(timeRunning == Mathf.Infinity)
+        if(Time.time-slamTimer < timeForSlam && Time.time-slamTimer>0)
         {
-            rbForce = originalForce;
+            rb.velocity = new Vector3(0, 0, 0);
+            rb.drag = 0;
         }
+        if(Time.time - slamTimer > timeForSlam && !isGrounded)
+        {
+            rb.velocity = new Vector3(0, (Time.time - slamTimer) * -20, 0);
+        }
+        if (isGrounded)
+        {
+            slamTimer = Mathf.Infinity;
+        }
+        
+        
+    }
 
-        else if(Time.time - timeRunning > 1)
-        {
-            if(Time.time - timeRunning < 4)
-            {
-                rbForce = originalForce + ((Time.time - (timeRunning + 1)) * 3.3f);
-            }
-            else
-            {
-                rbForce = originalForce + runningBonus;
-            }
-        }
-
-        else if(Time.time - timer > 0.1f && Time.time - timer < 1)
-        {
-            rbForce = (originalForce * 3 - ((Time.time - timer) * 20));
-        }
-        else if(Time.time - timer < 0 || Time.time - timer >0.6f)
-        {
-            timer = Mathf.Infinity;
-            rbForce = originalForce;  
-        }
-        */
-        }
     void wallRunning()
     {
         //wallcheck
         if ((isWallRight || isWallLeft) && !isGrounded)
         {
-            Debug.Log("WallFound");
+
             rb.useGravity = false;
-            rb.velocity = new Vector3(rb.velocity.x, 0);
+            rb.velocity = new Vector3(rb.velocity.x, -1);
         }
         //wallcheckloss
         else if (!isWallRight || !isWallLeft)
         {
-            Debug.Log("WallNotFound");
+
             rb.useGravity = true;
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y);
         }
@@ -171,7 +157,7 @@ public class Movement2 : MonoBehaviour
             rb.AddForce((transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
         }
     }
-    void lerpMovement()
+    void lerpDeacceleration()
     {
         if (timeElapsed < lerpDuration)
         {
@@ -180,4 +166,6 @@ public class Movement2 : MonoBehaviour
             rb.velocity = new Vector3(valueToLerp, rb.velocity.y, rb.velocity.z);
         }
     }
+
+    
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public class PlayerOneHealth : MonoBehaviour
 {
     public int maxHealth = 100;
@@ -27,7 +28,7 @@ public class PlayerOneHealth : MonoBehaviour
 
         if (currentHealth == 0)
         {
-            UnityEditor.EditorApplication.isPlaying = false;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

@@ -622,9 +622,9 @@ GameObject:
   - component: {fileID: 636000466}
   - component: {fileID: 636000465}
   - component: {fileID: 636000464}
-  - component: {fileID: 636000463}
   - component: {fileID: 636000462}
   - component: {fileID: 636000461}
+  - component: {fileID: 636000468}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -663,26 +663,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &636000463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 636000460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f126a604eb580af4c8abd15a022f9c0c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rbForce: 5
-  rbJumpForce: 15
-  feet: {fileID: 507523353}
-  stopTime: 10
-  dashForce: 10
-  dashCooldown: 5
-  lerpDuration: 3
-  wallRunDistance: 0.5
 --- !u!136 &636000464
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -764,6 +744,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &636000468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 636000460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e02c5b0054e4c4e9132805e312183f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rbForce: 10
+  rbJumpForce: 20
+  feet: {fileID: 507523353}
+  stopTime: 0.2
+  dashForce: 10
+  dashCooldown: 5
+  lerpDuration: 0.8
+  timeForSlam: 1
+  wallRunDistance: 0.5
 --- !u!1 &681356282
 GameObject:
   m_ObjectHideFlags: 0
