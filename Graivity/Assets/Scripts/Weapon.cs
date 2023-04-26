@@ -6,19 +6,29 @@ public class Weapon : MonoBehaviour
 {
     public Transform firePoint;
     public GameObject bulletPrefab;
+    float timer;
+    public float TimePerShot = 0.5f;
 
     private Camera mainCam;
     private Vector3 mousePos;
 
+    GameObject player;
+    Rigidbody rb;
+    public float gravityForce = 5;
+
    void Start()
     {
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        player = GameObject.Find("Player");
+        rb = player.GetComponent<Rigidbody>();
+        timer = Time.time;
     }
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && Time.time - timer > TimePerShot)
         {
             Shoot();
+            timer = Time.time;
         }
 
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
@@ -35,5 +45,9 @@ public class Weapon : MonoBehaviour
     void Shoot()
     {
         Instantiate (bulletPrefab, firePoint.position, firePoint.rotation);
+        if(player.GetComponent<noGravity>().inAir == true)
+        {
+            rb.AddForce(-transform.right * gravityForce, ForceMode.Impulse);
+        }
     }
 }
