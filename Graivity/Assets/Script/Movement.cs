@@ -186,7 +186,7 @@ public class Movement : MonoBehaviour
         //jump
         Vector3 rbDrag = new Vector3(0, rb.drag, 0);
         Vector3 jumpCalc = transform.up * rbJumpForce + rbDrag;
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && (isGrounded || jumpsLeft >= 1) && !(isWallLeft || isWallRight))
+        if ((Input.GetKeyDown(KeyCode.Space)) && (isGrounded || jumpsLeft >= 1) && !(isWallLeft || isWallRight))
         {
             rb.AddForce(jumpCalc, ForceMode.Impulse);
             jumpsLeft--;
