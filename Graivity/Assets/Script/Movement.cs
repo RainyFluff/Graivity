@@ -25,14 +25,17 @@ public class Movement : MonoBehaviour
     float endValue = 0;
     float valueToLerp;
 
-    [Header("Animation")]
-    public Animator animator;
-   
+    [Header("Slamdown")]
+    public float timeForSlam = 0.6f;
+    public float slamdownSpeed = 100;
+    float slamTimer = Mathf.Infinity;
+    
 
     [Header("WallRunning")]
     public float wallRunDistance = 0.5f;
     bool isWallRight;
     bool isWallLeft;
+    bool canWallRide;
 
     void Start()
     {
@@ -61,29 +64,38 @@ public class Movement : MonoBehaviour
     void move()
     {
         //left
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && isGrounded)
         {
             rb.velocity = new Vector3(-rbForce, rb.velocity.y, rb.velocity.z);
-            animator.SetBool("MoveRight", false);
+        }
+        if (Input.GetKey(KeyCode.A) && !isGrounded)
+        {
+            rb.AddForce(-rbForce * 0.1f,0,0, ForceMode.Acceleration);
         }
         //right
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && isGrounded)
         {
             rb.velocity = new Vector3(rbForce, rb.velocity.y, rb.velocity.z);
-            animator.SetBool("MoveRight", true);
+        }
+        if (Input.GetKey(KeyCode.D) && !isGrounded)
+        {
+            rb.AddForce(rbForce * 0.1f, 0, 0, ForceMode.Acceleration);
         }
         //dash right
         if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D) && dashTimer <= Time.time)
         {
-            rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
-            rb.AddForce(transform.right * dashForce, ForceMode.Impulse);
+            transform.position = new Vector3(transform.position.x + dashForce, transform.position.y, transform.position.z);
+            //rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+            //rb.AddForce(transform.right * dashForce, ForceMode.Impulse);
             dashTimer = Time.time + dashCooldown;
         }
         //dash left
         if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.A) && dashTimer <= Time.time)
         {
-            rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
-            rb.AddForce(-transform.right * dashForce, ForceMode.Impulse);
+            transform.position = new Vector3(transform.position.x - dashForce, transform.position.y, transform.position.z);
+            
+            //rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+            //rb.AddForce(-transform.right * dashForce, ForceMode.Impulse);
             dashTimer = Time.time + dashCooldown;
         }
         //jump
@@ -97,7 +109,10 @@ public class Movement : MonoBehaviour
         //slamdown
         if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.LeftControl)) && !isGrounded)
         {
-            rb.AddForce(-transform.up * rbJumpForce, ForceMode.Acceleration);
+            if(slamTimer == Mathf.Infinity)
+            {
+                slamTimer = Time.time;
+            }
         }
         //friction
         if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && isGrounded)
@@ -108,33 +123,57 @@ public class Movement : MonoBehaviour
         {
             timeElapsed = 0;
         }
+        //slam
+        if (Time.time - slamTimer < timeForSlam && Time.time - slamTimer > 0)
+        {
+            rb.velocity = new Vector3(0, 0, 0);
+            rb.drag = 0;
+        }
+        if (Time.time - slamTimer > timeForSlam && !isGrounded)
+        {
+            rb.velocity = new Vector3(0, (Time.time - slamTimer) * -slamdownSpeed, 0);
+        }
+        if (isGrounded)
+        {
+            slamTimer = Mathf.Infinity;
+        }
+
+        if(slamTimer != Mathf.Infinity)
+        {
+            canWallRide = false;
+        }
+        else
+        {
+            canWallRide = true;
+        }
     }
 
     void wallRunning()
     {
-        //wallcheck
-        if ((isWallRight || isWallLeft) && !isGrounded)
+        if (canWallRide)
         {
-            
-            rb.useGravity = false;
-            rb.velocity = new Vector3(rb.velocity.x, -1);
-        }
-        //wallcheckloss
-        else if (!isWallRight || !isWallLeft)
-        {
-            
-            rb.useGravity = true;
-            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y);
-        }
-        //wall jump left
-        if (isWallRight && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
-        {
-            rb.AddForce((-transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
-        }
-        //wall jump right
-        if (isWallLeft && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
-        {
-            rb.AddForce((transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
+            //wallcheck
+            if ((isWallRight || isWallLeft) && !isGrounded)
+            {
+                rb.useGravity = false;
+                rb.velocity = new Vector3(rb.velocity.x, -1);
+            }
+            //wallcheckloss
+            else if (!isWallRight || !isWallLeft)
+            {
+                rb.useGravity = true;
+                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y);
+            }
+            //wall jump left
+            if (isWallRight && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
+            {
+                rb.AddForce((-transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
+            }
+            //wall jump right
+            if (isWallLeft && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
+            {
+                rb.AddForce((transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
+            }
         }
     }
     void lerpDeacceleration()
