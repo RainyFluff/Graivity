@@ -65,7 +65,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         move();
-        isGrounded = Physics.CheckSphere(feet.transform.position, 0.2f, groundMask);
+        isGrounded = Physics.CheckSphere(feet.transform.position, 0.05f, groundMask);
         isWallRight = Physics.Raycast(transform.position, transform.right, wallRunDistance);
         isWallLeft = Physics.Raycast(transform.position, -transform.right, wallRunDistance);
         wallRunning();
