@@ -364,6 +364,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePoint: {fileID: 1371417257}
   bulletPrefab: {fileID: 3642045441902320059, guid: 189cbdcc7f20ca14a944149414b78c98, type: 3}
+  TimePerShot: 0.2
+  gravityForce: 2
 --- !u!1 &916019831
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,6 +1090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec678bc9a39612c488dc2dacb8e28502, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inAir: 0
 --- !u!1 &2098511160
 GameObject:
   m_ObjectHideFlags: 0
