@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class Textenlargement : MonoBehaviour
 {
-    float timer = Mathf.Infinity;
+    int number = 5;
+    RaycastHit hit;
+    float distance1;
+    float distance2;
+    float distance3;
+    float dashForce;
+    float originalDashForce;
+    
     // Start is called before the first frame update
     void Start()
     {
