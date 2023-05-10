@@ -98,17 +98,17 @@ public class Movement : MonoBehaviour
         //dash right
         if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D) && dashTimer <= Time.time && isGrounded)
         {
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.6f, transform.position.z), transform.right, out hit, 5))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.6f, transform.position.z), transform.right, out hit, originalDashForce))
             {
                 distance1 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
             }
 
-            if (Physics.Raycast(transform.position, transform.right, out hit, 5))
+            if (Physics.Raycast(transform.position, transform.right, out hit, originalDashForce))
             {
                 distance2 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
             }
 
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.6f, transform.position.z), transform.right, out hit, 5))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.6f, transform.position.z), transform.right, out hit, originalDashForce))
             {
                 distance3 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
             }
@@ -133,7 +133,7 @@ public class Movement : MonoBehaviour
 
             dashForce = originalDashForce;
 
-            slamTimer = Time.time + dashCooldown;
+            dashTimer = Time.time + dashCooldown;
             /*transform.position = new Vector3(transform.position.x + dashForce, transform.position.y, transform.position.z);
             rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
             rb.AddForce(transform.right * dashForce, ForceMode.Impulse);
@@ -142,17 +142,17 @@ public class Movement : MonoBehaviour
         //dash left
         if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.A) && dashTimer <= Time.time && isGrounded)
         {
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.6f, transform.position.z), -transform.right, out hit, 5))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.6f, transform.position.z), -transform.right, out hit, originalDashForce))
             {
                 distance1 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
             }
 
-            if (Physics.Raycast(transform.position, -transform.right, out hit, 5))
+            if (Physics.Raycast(transform.position, -transform.right, out hit, originalDashForce))
             {
                 distance2 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
             }
 
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.6f, transform.position.z), -transform.right, out hit, 5))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.6f, transform.position.z), -transform.right, out hit, originalDashForce))
             {
                 distance3 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
             }
@@ -177,7 +177,7 @@ public class Movement : MonoBehaviour
 
             dashForce = originalDashForce;
 
-            slamTimer = Time.time + dashCooldown;
+            dashTimer = Time.time + dashCooldown;
             //transform.position = new Vector3(transform.position.x - dashForce, transform.position.y, transform.position.z);
             //rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
             //rb.AddForce(-transform.right * dashForce, ForceMode.Impulse);
