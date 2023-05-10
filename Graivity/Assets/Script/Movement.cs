@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
@@ -37,6 +39,14 @@ public class Movement : MonoBehaviour
     bool isWallLeft;
     bool canWallRide;
 
+    [Header("PrettyJuice")]
+    public ParticleSystem ParticleSystem;
+
+    float originalDashForce;
+    RaycastHit hit;
+    float distance1;
+    float distance2;
+    float distance3;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -44,7 +54,11 @@ public class Movement : MonoBehaviour
         isWallRight = false;
         isWallLeft = false;
         groundMask = LayerMask.GetMask("Ground");
-        
+
+        originalDashForce = dashForce;
+        distance1 = dashForce;
+        distance2 = dashForce;
+        distance3 = dashForce;
     }
 
     // Update is called once per frame
@@ -82,21 +96,92 @@ public class Movement : MonoBehaviour
             rb.AddForce(rbForce * 0.1f, 0, 0, ForceMode.Acceleration);
         }
         //dash right
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D) && dashTimer <= Time.time)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D) && dashTimer <= Time.time && isGrounded)
         {
-            transform.position = new Vector3(transform.position.x + dashForce, transform.position.y, transform.position.z);
-            //rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
-            //rb.AddForce(transform.right * dashForce, ForceMode.Impulse);
-            dashTimer = Time.time + dashCooldown;
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.6f, transform.position.z), transform.right, out hit, 5))
+            {
+                distance1 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
+            }
+
+            if (Physics.Raycast(transform.position, transform.right, out hit, 5))
+            {
+                distance2 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
+            }
+
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.6f, transform.position.z), transform.right, out hit, 5))
+            {
+                distance3 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
+            }
+
+            if (distance1 < distance2)
+            {
+                if (distance1 < distance3)
+                {
+                    dashForce = distance1;
+                }
+            }
+            else if (distance2 < distance3)
+            {
+                dashForce = distance2;
+            }
+            else
+            {
+                dashForce = distance3;
+            }
+
+            transform.position = new Vector3(transform.position.x + dashForce - 0.51f, transform.position.y, transform.position.z);
+
+            dashForce = originalDashForce;
+
+            slamTimer = Time.time + dashCooldown;
+            /*transform.position = new Vector3(transform.position.x + dashForce, transform.position.y, transform.position.z);
+            rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+            rb.AddForce(transform.right * dashForce, ForceMode.Impulse);
+            dashTimer = Time.time + dashCooldown; */
         }
         //dash left
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.A) && dashTimer <= Time.time)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.A) && dashTimer <= Time.time && isGrounded)
         {
-            transform.position = new Vector3(transform.position.x - dashForce, transform.position.y, transform.position.z);
-            
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.6f, transform.position.z), -transform.right, out hit, 5))
+            {
+                distance1 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
+            }
+
+            if (Physics.Raycast(transform.position, -transform.right, out hit, 5))
+            {
+                distance2 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
+            }
+
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.6f, transform.position.z), -transform.right, out hit, 5))
+            {
+                distance3 = Mathf.Abs(transform.position.x - hit.transform.position.x) - hit.transform.localScale.x / 2;
+            }
+
+            if (distance1 < distance2)
+            {
+                if (distance1 < distance3)
+                {
+                    dashForce = distance1;
+                }
+            }
+            else if (distance2 < distance3)
+            {
+                dashForce = distance2;
+            }
+            else
+            {
+                dashForce = distance3;
+            }
+
+            transform.position = new Vector3(transform.position.x - (dashForce - 0.51f), transform.position.y, transform.position.z);
+
+            dashForce = originalDashForce;
+
+            slamTimer = Time.time + dashCooldown;
+            //transform.position = new Vector3(transform.position.x - dashForce, transform.position.y, transform.position.z);
             //rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
             //rb.AddForce(-transform.right * dashForce, ForceMode.Impulse);
-            dashTimer = Time.time + dashCooldown;
+            //dashTimer = Time.time + dashCooldown;
         }
         //jump
         Vector3 rbDrag = new Vector3(0, rb.drag, 0);
@@ -105,6 +190,8 @@ public class Movement : MonoBehaviour
         {
             rb.AddForce(jumpCalc, ForceMode.Impulse);
             jumpsLeft--;
+            ParticleSystem.transform.position = new Vector3(transform.position.x, transform.position.y-0.6f, transform.position.z);
+            ParticleSystem.Play();
         }
         //slamdown
         if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.LeftControl)) && !isGrounded)
