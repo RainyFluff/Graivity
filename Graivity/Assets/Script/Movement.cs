@@ -14,7 +14,7 @@ public class Movement : MonoBehaviour
     LayerMask groundMask;
     public float stopTime = 0.2f;
     bool isGrounded;
-    float jumpsLeft;
+    float jumpsLeft = 2;
     public float dashForce = 10f;
 
     [Header("CoolDowns")]
@@ -73,7 +73,7 @@ public class Movement : MonoBehaviour
         particleForces();
         if (isGrounded)
         {
-            jumpsLeft = 1;
+            jumpsLeft = 2;
         }
     }
 
