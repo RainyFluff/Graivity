@@ -40,7 +40,8 @@ public class Movement : MonoBehaviour
     bool canWallRide;
 
     [Header("PrettyJuice")]
-    public ParticleSystem ParticleSystem;
+    public ParticleSystem jumpParticleSystem;
+    public ParticleSystem fallingParticleSystem;
 
     float originalDashForce;
     RaycastHit hit;
@@ -69,6 +70,7 @@ public class Movement : MonoBehaviour
         isWallRight = Physics.Raycast(transform.position, transform.right, wallRunDistance);
         isWallLeft = Physics.Raycast(transform.position, -transform.right, wallRunDistance);
         wallRunning();
+        particleForces();
         if (isGrounded)
         {
             jumpsLeft = 1;
@@ -190,8 +192,8 @@ public class Movement : MonoBehaviour
         {
             rb.AddForce(jumpCalc, ForceMode.Impulse);
             jumpsLeft--;
-            ParticleSystem.transform.position = new Vector3(transform.position.x, transform.position.y-0.6f, transform.position.z);
-            ParticleSystem.Play();
+            jumpParticleSystem.transform.position = new Vector3(transform.position.x, transform.position.y-0.6f, transform.position.z);
+            jumpParticleSystem.Play();
         }
         //slamdown
         if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.LeftControl)) && !isGrounded)
@@ -262,6 +264,13 @@ public class Movement : MonoBehaviour
                 rb.AddForce((transform.right * rbJumpForce) + (transform.up * rbJumpForce), ForceMode.Impulse);
             }
         }
+    }
+    void particleForces()
+    {
+        ParticleSystem.MainModule fallingMain = fallingParticleSystem.main;
+        ParticleSystem.ForceOverLifetimeModule fallingForceLifetime = fallingParticleSystem.forceOverLifetime;
+        fallingForceLifetime.x = -rb.velocity.x;
+        fallingForceLifetime.y = -rb.velocity.y;
     }
     void lerpDeacceleration()
     {
