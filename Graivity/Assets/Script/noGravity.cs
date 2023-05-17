@@ -6,6 +6,7 @@ public class noGravity : MonoBehaviour
 {
     Rigidbody rb;
     public bool inAir;
+    public ParticleSystem fallingParticleSystem;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +25,11 @@ public class noGravity : MonoBehaviour
             GetComponent<Movement>().enabled = false;
             epicFloat();
             inAir = true;
+            ParticleSystem.MainModule fallingMain = fallingParticleSystem.main;
+            ParticleSystem.ForceOverLifetimeModule fallingForceLifetime = fallingParticleSystem.forceOverLifetime;
+            fallingForceLifetime.x = -rb.velocity.x;
+            fallingForceLifetime.y = -rb.velocity.y;
+
         }
     }
     private void OnTriggerExit(Collider other)
