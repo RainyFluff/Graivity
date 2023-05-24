@@ -14,7 +14,10 @@ public class End : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("Main Menu");
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
